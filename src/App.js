@@ -1,26 +1,48 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import foods from './foods.json';
+import FoodBox from './components/FoodBox';
+import AddFood from './components/AddFood';
+import 'bulma/css/bulma.css';
+class App extends React.Component {
+  state = {
+    foods: foods,
+    filteredFoods: foods,
+    searchKeyword: '',
+  };
+  addFood = (newFood) => {
+    //add newFood to foods (state)
+    this.setState({
+      foods: this.state.foods.concat(newFood),
+    });
+  };
+  handleSearch = (event) => {
+    this.setState({
+      searchKeyword: event.target.value,
+      filteredFoods: this.state.foods.filter((food) => {
+        return food.name
+          .toLowerCase()
+          .startsWith(event.target.value.toLowerCase());
+      }),
+    });
+  };
+  render() {
+    return (
+      <div className="App">
+        Search for food: <input onChange={this.handleSearch} />
+        <AddFood miguelsProp={this.addFood} />
+        {this.state.filteredFoods.map((food, index) => {
+          return (
+            <FoodBox
+              key={index}
+              calories={food.calories}
+              name={food.name}
+              image={food.image}
+            />
+          );
+        })}
+      </div>
+    );
+  }
 }
-
 export default App;
